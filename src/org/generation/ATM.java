@@ -1,7 +1,9 @@
 package org.generation;
 
 
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 
@@ -13,6 +15,7 @@ public class ATM {
 	private static double limitWithdraw = 6_000;
 	private static double multiplesWithdraw = 50;
 	private static double mountDonation = 200;
+	private List<DTOTransaction> transacciones = new ArrayList<DTOTransaction>();
 
 	private int serialNumber = 0;
 	private double balance;
@@ -23,6 +26,8 @@ public class ATM {
 	public ATM() {
 		this.serialNumber = serialNumber++;
 		this.balance = initialBalance;
+		DTOTransaction transaccion = new DTOTransaction("Creacion de cuenta con saldo", initialBalance);
+		transacciones.add(transaccion);
 	}
 	
 	//setters
@@ -39,6 +44,23 @@ public class ATM {
 	public void showBalance() {
 		System.out.println("Tu balance es: $" + getBalance()); 
 	}
+	
+	public List<DTOTransaction> getTransacciones() { 
+		return transacciones;
+		} 
+	
+	public void setTransacciones(List<DTOTransaction> transacciones) { 
+			this.transacciones = transacciones;
+			}
+	
+	public void mostrarTransacciones() { 
+		
+		for(DTOTransaction dtoTransaction : getTransacciones()) {
+			System.out.println(dtoTransaction.toString());
+		}
+		menu();
+	}
+	
 	public void menu() {
 		int option;
 		System.out.println();
@@ -80,6 +102,7 @@ public class ATM {
 			}
 			case 5: {	
 				attempts = 0;
+				mostrarTransacciones();
 				break;
 			}
 			case 9: {	//listo
@@ -131,6 +154,8 @@ public class ATM {
 				} while (mount % 50 != 0);
 				setBalance(mount + getBalance());
 				System.out.println("Deposito realizado con exito");
+				DTOTransaction transaccion = new DTOTransaction("Deposito a cuenta de cheques", mount); 
+				transacciones.add(0,transaccion);
 				showBalance();
 				menu();
 			}
@@ -140,6 +165,8 @@ public class ATM {
 				sc.nextLine();
 				setBalance(getBalance() - mount);
 				System.out.println("Deposito realizado con exito");
+				DTOTransaction transaccion = new DTOTransaction("Deposito a TC", mount); 
+				transacciones.add(0,transaccion);
 				showBalance();
 				menu();
 				
@@ -173,7 +200,8 @@ public class ATM {
 		} while (mount > limitWithdraw || mount > getBalance() || (mount % multiplesWithdraw) != 0 );
 		setBalance(this.getBalance() - mount);
 		System.out.println("Retiro realizado con exito");
-		
+		DTOTransaction transaccion = new DTOTransaction("Retiro", mount); 
+		transacciones.add(0,transaccion);
 		
 		donations();
 		
@@ -199,7 +227,7 @@ public class ATM {
 		menu();
 	}
 	
-	public void movements() {}
+	
 	
 	public void exit() {	
 		System.out.println();
